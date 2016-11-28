@@ -164,7 +164,7 @@ var Engine = (function(global) {
 
         // Assign a random speed for all enemies
         allEnemies.forEach((enemy) => {
-            enemy.speed = RAND_SPEED;
+            enemy.speed = Math.floor(Math.random() * SPEED_MAX) + 1;
         });
     }
 

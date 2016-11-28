@@ -11,7 +11,6 @@ var PLAYER_START_Y = 400;
 var MOVE_X = 100;
 var MOVE_Y = 90;
 var SPEED_MAX = 5;
-var RAND_SPEED = Math.floor(Math.random() * SPEED_MAX) + 1;
 
 
 // Enemies our player must avoid
@@ -31,7 +30,7 @@ Enemy.prototype.update = function(dt) {
     if (this.x >= canvas.width) {
         // Restart enemy trip once they reach the end of their run
         this.x = 0;
-        this.speed = RAND_SPEED;
+        this.speed = Math.floor(Math.random() * SPEED_MAX) + 1;
     }
 
     // Animate the enemy
@@ -40,10 +39,10 @@ Enemy.prototype.update = function(dt) {
     // Check for collision with Player
     if ((this.y > player.y - (MOVE_Y / 2)) &&
         (this.y < player.y + (MOVE_Y / 2))) {
-        if ((this.x + (MOVE_X / 2) > player.x) &&
-            (this.x - (MOVE_X / 2) < player.x)) {
-            // Reset the player position if collision detected.
-            reset();
+        if ((this.x + (MOVE_X /2) > player.x) &&
+            (this.x - (MOVE_X /2) < player.x)) {
+           // Reset the player position if collision detected.
+           reset();
         }
     }
 };
