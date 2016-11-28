@@ -80,7 +80,6 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
     }
 
     /* This is called by the update function and loops through all of the
@@ -159,7 +158,10 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
+        console.log('player x: ' + player.x + ', y: ' + player.y);
+        console.log('enemy x: ' + allEnemies[0].x + ', y: ' + allEnemies[0].y);
+        player.x = PLAYER_START_X;
+        player.y = PLAYER_START_Y;
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -181,4 +183,5 @@ var Engine = (function(global) {
      */
     global.ctx = ctx;
     global.canvas = canvas;
+    global.reset = reset;
 })(this);

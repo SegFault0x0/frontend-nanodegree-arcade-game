@@ -13,13 +13,10 @@ var MOVE_Y = 90;
 
 // Enemies our player must avoid
 var Enemy = function() {
-    var obj = Object.create(Enemy.prototype);
-
     // Add Enemy properties
-    obj.sprite = 'images/enemy-bug.png';
-    obj.x = 0;
-    obj.y = 50;
-    return obj;
+    this.sprite = 'images/enemy-bug.png';
+    this.x = 0;
+    this.y = 50;
 };
 
 // Update the enemy's position, required method for game
@@ -29,6 +26,16 @@ Enemy.prototype.update = function(dt) {
     // which will ensure the game runs at the same speed for
     // all computers.
     this.x = (this.x >= canvas.width) ? 0 : this.x + (100 * dt);
+
+    // Check for collision with Player
+    if ((this.y > player.y - (MOVE_Y / 2)) &&
+        (this.y < player.y + (MOVE_Y / 2))) {
+        if ((this.x + (MOVE_X /2 ) > player.x) &&
+            (this.x - (MOVE_X /2 ) < player.x)) {
+           // Reset the player position if collision detected.
+           reset();
+        }
+    }
 };
 
 // Draw the enemy on the screen, required method for game
@@ -36,27 +43,22 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-    var obj = Object.create(Player.prototype);
-
     // Add Player properties
-    obj.sprite = 'images/char-boy.png';
-    obj.x = PLAYER_START_X;
-    obj.y = PLAYER_START_Y;
-
-    return obj;
+    this.sprite = 'images/char-boy.png';
+    this.x = PLAYER_START_X;
+    this.y = PLAYER_START_Y;
 }
 
 Player.prototype.update = function() {
-    // Reset the player position if the player reaches the river/wins.
     if (this.y <= 0) {
-       this.x = PLAYER_START_X;
-       this.y = PLAYER_START_Y;
+        // Reset the player position if the player reaches the river/wins.
+        reset();
     }
-
 };
 
 Player.prototype.render = function() {
@@ -104,7 +106,7 @@ Player.prototype.handleInput = function(key) {
 for (var i = 0; i < NUM_OF_ENEMIES; ++i) {
     allEnemies.push(new Enemy());
 }
-var player = Player();
+var player = new Player();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
