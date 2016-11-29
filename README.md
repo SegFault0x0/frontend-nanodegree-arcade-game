@@ -1,6 +1,18 @@
-frontend-nanodegree-arcade-game
-===============================
+Frogger Game Clone
+==================
+A twist on the classic Frogger arcade game.
 
-Students should use this [rubric](https://review.udacity.com/#!/projects/2696458597/rubric) for self-checking their submission. Make sure the functions you write are **object-oriented** - either class functions (like Player and Enemy) or class prototype functions such as Enemy.prototype.checkCollisions, and that the keyword 'this' is used appropriately within your class and class prototype functions to refer to the object the function is called upon. Also be sure that the **readme.md** file is updated with your instructions on both how to 1. Run and 2. Play your arcade game.
 
-For detailed instructions on how to get started, check out this [guide](https://docs.google.com/document/d/1v01aScPjSWCCWQLIpFqvg3-vXLH2e8_SZQKC8jNO0Dc/pub?embedded=true).
+Installation
+============
+1. Obtain the game by downloading or cloning its GitHub repository.
+
+`$ git clone https://github.com/SegFault0x0/frontend-nanodegree-arcade-game.git`
+
+2. Navigate to the downloaded folder either by using a file browser or via the command line.
+3. Open the `index.html` file in a web browser.  The game will start as soon as the page loads.
+
+
+Usage
+=====
+Use the arrow keys to move the player up, down, left and right while moving towards the river without getting hit by one of the ladybugs.  Once the player reaches the river, the game is won.

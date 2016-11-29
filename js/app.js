@@ -2,7 +2,8 @@
 var allEnemies = [];
 
 /* CONSTANTS */
-var NUM_OF_ENEMIES = 3;
+var NUM_OF_ENEMIES = 5;
+var ENEMY_START_NUM = 3;
 var ENEMY_ROWS = [60, 140, 230];
 var BOUNDS_X = 400;
 var BOUNDS_Y = 400;
@@ -25,15 +26,19 @@ var Enemy = function(row) {
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
-    // The dt parameter ensures that the game runs at the same speed for
-    // all computers.
     if (this.x >= canvas.width) {
         // Restart enemy trip once they reach the end of their run
         this.x = 0;
-        this.speed = Math.floor(Math.random() * SPEED_MAX) + 1;
+
+        // Randomly select the pavement row.
+        var row = Math.floor(Math.random() * ENEMY_ROWS.length);
+        this.y = ENEMY_ROWS[row];
+
+        this.updateSpeed();
     }
 
-    // Animate the enemy
+    // Animate the enemy.  The dt parameter ensures that the game runs at the
+    // same speed for all computers.
     this.x += (this.speed * 100) * dt;
 
     // Check for collision with Player
@@ -50,6 +55,10 @@ Enemy.prototype.update = function(dt) {
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+Enemy.prototype.updateSpeed = function() {
+    this.speed = Math.floor(Math.random() * SPEED_MAX) + 1;
 };
 
 
