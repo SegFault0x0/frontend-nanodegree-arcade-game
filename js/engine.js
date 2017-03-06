@@ -159,8 +159,8 @@ var Engine = (function(global) {
      */
     function reset() {
         // Reset player position
-        player.x = PLAYER_START_X;
-        player.y = PLAYER_START_Y;
+        player.x = playerData.startX;
+        player.y = playerData.startY;
 
         // Assign a random speed for all enemies
         allEnemies.forEach((enemy) => {

@@ -1,131 +1,151 @@
+'use strict';
+
 /* GLOBAL VARS */
 var allEnemies = [];
 
 /* CONSTANTS */
-var NUM_OF_ENEMIES = 5;
-var ENEMY_START_NUM = 3;
-var ENEMY_ROWS = [60, 140, 230];
-var BOUNDS_X = 400;
-var BOUNDS_Y = 400;
-var PLAYER_START_X = 200;
-var PLAYER_START_Y = 400;
-var MOVE_X = 100;
-var MOVE_Y = 90;
-var SPEED_MAX = 5;
+var playerData = {
+    image: 'images/char-boy.png',
+    startX: 200,
+    startY: 400,
+};
 
+var enemyData = {
+    image: 'images/enemy-bug.png',
+    startX: 0,
+    startY: [60, 140, 230],
+};
+
+var options = {
+    numOfEnemyRows: enemyData.startY.length,
+    numOfEnemies: 5,
+    xBounds: 400,
+    yBounds: 400,
+    moveX: 100,
+    moveY: 90,
+    speedMax: 5,
+};
+
+
+// Create the player class
+// This class requires an update(), render() and a handleInput() method.
+var Player = function(data) {
+    // Add Player properties
+    this.sprite = data.image;
+    this.x = data.startX;
+    this.y = data.startY;
+};
+
+Player.prototype = {
+    update: function() {
+        if (this.y <= 0) {
+            // Reset the player position if the player reaches the river/wins.
+            reset();
+        }
+    },
+
+    // Draw a player on the screen
+    render: function() {
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    },
+
+    handleInput: function(key) {
+        switch (key) {
+            case 'left':
+                if (this.x > 0) {
+                    this.x -= options.moveX;
+                }
+
+                break;
+
+            case 'right':
+                if (this.x < options.xBounds) {
+                    this.x += options.moveX;
+                }
+
+                break;
+
+            case 'up':
+                if (this.y > 0) {
+                    this.y -= options.moveY;
+                }
+
+                break;
+
+            case 'down':
+                if (this.y < options.yBounds) {
+                    this.y += options.moveY;
+                }
+
+                break;
+
+            default:
+                break;
+        }
+    },
+};
 
 // Enemies our player must avoid
 var Enemy = function(row) {
     // Add Enemy properties
-    this.sprite = 'images/enemy-bug.png';
-    this.x = 0;
-    this.y = ENEMY_ROWS[row];
+    // Overwrite the initial Y position
+    var data = Object.assign(
+        {},
+        enemyData,
+        {startY: enemyData.startY[row]}
+    );
+    Player.call(this, data);
     this.speed = 1;
 };
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
-Enemy.prototype.update = function(dt) {
-    if (this.x >= canvas.width) {
-        // Restart enemy trip once they reach the end of their run
-        this.x = 0;
+Enemy.prototype = Object.create(Player.prototype, {
+    update: {
+        enumerable: true,
+        value: function(dt) {
+            if (this.x >= canvas.width) {
+                // Restart enemy trip once they reach the end of their run
+                this.x = 0;
 
-        // Randomly select the pavement row.
-        var row = Math.floor(Math.random() * ENEMY_ROWS.length);
-        this.y = ENEMY_ROWS[row];
+                // Randomly select the pavement row.
+                var row = Math.floor(Math.random() * options.numOfEnemyRows);
+                this.y = enemyData.startY[row];
 
-        this.updateSpeed();
-    }
+                this.updateSpeed();
+            }
 
-    // Animate the enemy.  The dt parameter ensures that the game runs at the
-    // same speed for all computers.
-    this.x += (this.speed * 100) * dt;
+            // Animate the enemy.  The dt parameter ensures that the game runs
+            // at the same speed for all computers.
+            this.x += (this.speed * 100) * dt;
 
-    // Check for collision with Player
-    if ((this.y > player.y - (MOVE_Y / 2)) &&
-        (this.y < player.y + (MOVE_Y / 2))) {
-        if ((this.x + (MOVE_X /2) > player.x) &&
-            (this.x - (MOVE_X /2) < player.x)) {
-           // Reset the player position if collision detected.
-           reset();
-        }
-    }
-};
+            // Check for collision with Player
+            if ((this.y > player.y - (options.moveY / 2)) &&
+                (this.y < player.y + (options.moveY / 2))) {
+                if ((this.x + (options.moveX /2) > player.x) &&
+                    (this.x - (options.moveX /2) < player.x)) {
+                   // Reset the player position if collision detected.
+                   reset();
+                }
+            }
+        },
+    },
 
-// Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
+    updateSpeed: {
+        enumerable: true,
+        value: function() {
+            this.speed = Math.floor(Math.random() * options.speedMax) + 1;
+        },
+    },
+});
 
-Enemy.prototype.updateSpeed = function() {
-    this.speed = Math.floor(Math.random() * SPEED_MAX) + 1;
-};
 
-
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
-var Player = function() {
-    // Add Player properties
-    this.sprite = 'images/char-boy.png';
-    this.x = PLAYER_START_X;
-    this.y = PLAYER_START_Y;
+// Instantiate Enemey and Player objects.
+for (var i = 0; i < options.numOfEnemies; ++i) {
+    allEnemies.push(new Enemy(i % options.numOfEnemyRows));
 }
 
-Player.prototype.update = function() {
-    if (this.y <= 0) {
-        // Reset the player position if the player reaches the river/wins.
-        reset();
-    }
-};
-
-Player.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-
-Player.prototype.handleInput = function(key) {
-    switch (key) {
-        case 'left':
-            if (this.x > 0) {
-                this.x -= MOVE_X;
-            }
-
-            break;
-
-        case 'right':
-            if (this.x < BOUNDS_X) {
-                this.x += MOVE_X;
-            }
-
-            break;
-
-        case 'up':
-            if (this.y > 0) {
-                this.y -= MOVE_Y;
-            }
-
-            break;
-
-        case 'down':
-            if (this.y < BOUNDS_Y) {
-                this.y += MOVE_Y;
-            }
-
-            break;
-
-        default:
-            break;
-    }
-};
-
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
-for (var i = 0; i < NUM_OF_ENEMIES; ++i) {
-    allEnemies.push(new Enemy(i));
-}
-
-var player = new Player();
+var player = new Player(playerData);
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
